@@ -1,0 +1,61 @@
+<div class="report-container">
+  <form [formGroup]="formGroup">
+    <p-splitter
+      [panelSizes]="[20, 40, 40]"
+      [minSizes]="[15, 30, 30]"
+      styleClass="mb-5"
+    >
+      <ng-template pTemplate>
+        <div
+          class="left-column col flex flex-column gap-2 justify-content-center"
+        >
+          <div class="template-container flex justify-content-center">
+            <p-floatLabel>
+              <p-autoComplete
+                formControlName="template"
+                [forceSelection]="true"
+                [dropdown]="true"
+                [suggestions]="filteredTemplates"
+                (completeMethod)="filterTemplate($event)"
+                field="name"
+                inputId="template-label"
+              />
+              <label for="template-label">Template</label>
+            </p-floatLabel>
+          </div>
+          <div class="protocol-container">
+            <p-orderList
+              [value]="protocols"
+              [metaKeySelection]="true"
+              [listStyle]="{ 'max-height': '30rem' }"
+              header="Protocols"
+              [dragdrop]="true"
+            >
+              <ng-template let-protocol pTemplate="item">
+                <div class="flex-1 flex flex-row">
+                  <span>{{ protocol.name }}</span>
+                  <div class="flex gap-2" style="margin-left: auto">
+                    <i
+                      class="pi pi-check-circle"
+                      style="font-size: 1rem; cursor: pointer"
+                    ></i>
+                  </div>
+                </div>
+              </ng-template>
+            </p-orderList>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate>
+        <div class="col flex align-items-center justify-content-center">
+          Panel 2
+        </div>
+      </ng-template>
+      <ng-template pTemplate>
+        <div class="col flex align-items-center justify-content-center">
+          Panel 3
+        </div>
+      </ng-template>
+    </p-splitter>
+  </form>
+</div>

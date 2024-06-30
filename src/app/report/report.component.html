@@ -1,55 +1,100 @@
 <div class="report-container">
   <form [formGroup]="formGroup">
-    <p-splitter
-      [panelSizes]="[20, 40, 40]"
-      [minSizes]="[15, 30, 30]"
-      styleClass="mb-5"
-    >
+    <p-splitter [panelSizes]="[70, 30]" [minSizes]="[60, 20]" styleClass="mb-5">
       <ng-template pTemplate>
-        <div
-          class="left-column col flex flex-column gap-2 justify-content-center"
+        <p-splitter
+          [panelSizes]="[20, 80]"
+          [minSizes]="[20, 60]"
+          styleClass="mb-5"
         >
-          <div class="template-container flex justify-content-center">
-            <p-floatLabel>
-              <p-autoComplete
-                formControlName="template"
-                [forceSelection]="true"
-                [dropdown]="true"
-                [suggestions]="filteredTemplates"
-                (completeMethod)="filterTemplate($event)"
-                field="name"
-                inputId="template-label"
-              />
-              <label for="template-label">Template</label>
-            </p-floatLabel>
-          </div>
-          <div class="protocol-container">
-            <p-orderList
-              [value]="protocols"
-              [metaKeySelection]="true"
-              [listStyle]="{ 'max-height': '30rem' }"
-              header="Protocols"
-              [dragdrop]="true"
-            >
-              <ng-template let-protocol pTemplate="item">
-                <div class="flex-1 flex flex-row">
-                  <span>{{ protocol.name }}</span>
-                  <div class="flex gap-2" style="margin-left: auto">
-                    <i
-                      class="pi pi-check-circle"
-                      style="font-size: 1rem; cursor: pointer"
-                    ></i>
-                  </div>
-                </div>
-              </ng-template>
-            </p-orderList>
-          </div>
-        </div>
-      </ng-template>
-      <ng-template pTemplate>
-        <div class="col flex align-items-center justify-content-center">
-          Panel 2
-        </div>
+          <ng-template pTemplate>
+            <div class="left-column col flex flex-column gap-2">
+              <div class="template-container flex justify-content-center">
+                <p-floatLabel>
+                  <p-autoComplete
+                    formControlName="template"
+                    [forceSelection]="true"
+                    [dropdown]="true"
+                    [suggestions]="filteredTemplates"
+                    (completeMethod)="filterTemplate($event)"
+                    (onSelect)="onTemplateSelect($event)"
+                    field="name"
+                  />
+                  <label for="template-label">Template</label>
+                </p-floatLabel>
+              </div>
+              <div class="protocol-container">
+                <p-orderList
+                  [value]="protocols"
+                  [metaKeySelection]="true"
+                  [responsive]="true"
+                  [listStyle]="{ 'max-height': '30rem' }"
+                  header="Protocols"
+                  [dragdrop]="true"
+                  (onSelectionChange)="onProtocolSelect($event)"
+                >
+                  <ng-template let-protocol pTemplate="item">
+                    <div class="flex-1 flex flex-row">
+                      <span>{{ protocol.name }}</span>
+                      <div class="flex gap-2" style="margin-left: auto">
+                        <i
+                          class="pi pi-check-circle"
+                          style="font-size: 1rem; cursor: pointer"
+                        ></i>
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-orderList>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template pTemplate>
+            <div class="flex flex-column gap-1" style="width: 100%">
+              <div class="flex flex-row gap-3 justify-content-center mt-3">
+                <label for="search-tag-label">Allow search by tags</label>
+                <p-inputSwitch
+                  formControlName="allowTagSearch"
+                  (onChange)="onAllowTagSearchChange($event)"
+                />
+                <label for="exact-tag-label">Exact tag match</label>
+                <p-inputSwitch
+                  formControlName="onlyExactTagSearch"
+                  (onChange)="onExactTagSearchChange($event)"
+                />
+              </div>
+              <div class="col flex">
+                <ng-container *ngFor="let protocol of protocols">
+                  <p-pickList
+                    *ngIf="protocol.id === currentProtocol?.id"
+                    [source]="findingList.get(currentProtocol!.id)"
+                    [target]="selectedFindings.get(currentProtocol!.id)"
+                    sourceHeader="Avalailable Findings"
+                    targetHeader="Selected Findings"
+                    [dragdrop]="true"
+                    [responsive]="true"
+                    class="findings-picklist"
+                    [sourceStyle]="{ height: '30rem' }"
+                    [targetStyle]="{ height: '30rem' }"
+                    filterBy="description"
+                    sourceFilterPlaceholder="Search finding"
+                    targetFilterPlaceholder="Search finding"
+                    breakpoint="1400px"
+                    (onSourceFilter)="onAvailableFindingsFilter($event)"
+                    (onTargetFilter)="onSelectedFindingsFilter($event)"
+                  >
+                    <ng-template let-finding pTemplate="item">
+                      <div class="flex flex-wrap p-2 align-items-center gap-3">
+                        <span>
+                          {{ finding.description }}
+                        </span>
+                      </div>
+                    </ng-template>
+                  </p-pickList>
+                </ng-container>
+              </div>
+            </div>
+          </ng-template>
+        </p-splitter>
       </ng-template>
       <ng-template pTemplate>
         <div class="col flex align-items-center justify-content-center">

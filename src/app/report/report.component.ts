@@ -13,12 +13,15 @@ import { Finding, Protocol, ReportService, Template } from './report.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SplitterModule } from 'primeng/splitter';
+import { EditorModule } from 'primeng/editor';
 import {
   PickListModule,
+  PickListMoveToTargetEvent,
   PickListSourceFilterEvent,
   PickListTargetFilterEvent,
 } from 'primeng/picklist';
 import { InputSwitchChangeEvent, InputSwitchModule } from 'primeng/inputswitch';
+import Quill from 'quill';
 
 @Component({
   selector: 'app-report',
@@ -32,6 +35,7 @@ import { InputSwitchChangeEvent, InputSwitchModule } from 'primeng/inputswitch';
     SplitterModule,
     PickListModule,
     InputSwitchModule,
+    EditorModule,
   ],
   providers: [ReportService],
   templateUrl: './report.component.html',
@@ -52,13 +56,52 @@ export class ReportComponent implements OnInit {
 
   currentProtocol: Protocol | undefined;
 
+  editor: Quill | undefined;
+
   formGroup: FormGroup = new FormGroup({
     template: new FormControl<Template | null>(null),
     allowTagSearch: new FormControl<boolean>(true),
     onlyExactTagSearch: new FormControl<boolean>(false),
+    report: new FormControl<string>(''),
   });
 
   ngOnInit() {}
+
+  onEditorCreated(event: any): void {
+    console.log(event);
+    this.editor = event.editor;
+  }
+
+  onReportChange(event: any): void {
+    console.log(event);
+  }
+
+  onFindingSelect(event: PickListMoveToTargetEvent): void {
+    console.log(event);
+    console.log(this.selectedFindings.get(this.currentProtocol!.id));
+
+    const protocolIndex = this.protocols.findIndex(
+      (f) => f.id === this.currentProtocol!.id,
+    );
+
+    const findings = this.selectedFindings.get(this.currentProtocol!.id);
+
+    const findingsParagraph =
+      findings?.map((m) => m.description)?.join('. ') ?? '';
+
+    const linkNode = document.querySelector(`#rapid-${protocolIndex}`);
+
+    if (!linkNode) {
+    }
+
+    //const linkBlot = Quill.find(linkNode!) as Blot;
+
+    //const index = this.editor?.getIndex(linkBlot);
+
+    //this.editor?.updateContents(new Delt());
+
+    this.editor?.insertText(protocolIndex + 1, findingsParagraph);
+  }
 
   filterTemplate(event: AutoCompleteCompleteEvent): void {
     this.filteredTemplates = this.templates.filter((t) =>

@@ -75,6 +75,7 @@
                     class="findings-picklist"
                     [sourceStyle]="{ height: '30rem' }"
                     [targetStyle]="{ height: '30rem' }"
+                    (onMoveToTarget)="onFindingSelect($event)"
                     filterBy="description"
                     sourceFilterPlaceholder="Search finding"
                     targetFilterPlaceholder="Search finding"
@@ -98,7 +99,12 @@
       </ng-template>
       <ng-template pTemplate>
         <div class="col flex align-items-center justify-content-center">
-          Panel 3
+          <p-editor
+            formControlName="report"
+            (onInit)="onEditorCreated($event)"
+            (onTextChange)="onReportChange($event)"
+            [style]="{ height: '80vh' }"
+          />
         </div>
       </ng-template>
     </p-splitter>
